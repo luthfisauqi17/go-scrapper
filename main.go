@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -45,4 +47,26 @@ func main() {
 	}
 
 	log.Println(string(json))
+
+	csvFile, err := os.Create("articles.csv")
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	defer csvFile.Close()
+
+	csvWriter := csv.NewWriter(csvFile)
+	defer csvWriter.Flush()
+
+	header := []string{"Title", "Description"}
+	if csvWriter.Write(header); err != nil {
+		log.Fatalln("error writing header to file", err)
+	}
+
+	for _, article := range articles {
+		row := []string{article.Title, article.Description}
+		err := csvWriter.Write(row)
+		if err != nil {
+			log.Fatalln("error writing record to file", err)
+		}
+	}
 }
