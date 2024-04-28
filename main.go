@@ -64,8 +64,7 @@ func main() {
 
 	for _, article := range articles {
 		row := []string{article.Title, article.Description}
-		err := csvWriter.Write(row)
-		if err != nil {
+		if csvWriter.Write(row); err != nil {
 			log.Fatalln("error writing record to file", err)
 		}
 	}
